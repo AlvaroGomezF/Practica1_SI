@@ -60,11 +60,16 @@ for user in users_data['usuarios']:
     username = list(user.keys())[0]  # Obtiene el nombre de usuario
     ip_data = user[username]['ips']   # Obtiene los datos de IP
     date_data = user[username]['fechas']  #Obtiene los datos de las fechas
-
-    # Iterar sobre las IPs y fechas al mismo tiempo
-    for ip, fecha_str in zip(ip_data, date_data):
-        fecha = datetime.strptime(fecha_str, '%d/%m/%Y').date()
-        c.execute("INSERT INTO user_ips VALUES (?, ?, ?)", (username, ip, fecha))
+    if ip_data=='None' :
+        ip="None"
+        for fecha_str in date_data:
+            fecha = datetime.strptime(fecha_str, '%d/%m/%Y').date()
+            c.execute("INSERT INTO user_ips VALUES (?, ?, ?)", (username, ip, fecha))
+    else:
+        # Iterar sobre las IPs y fechas al mismo tiempo
+        for ip, fecha_str in zip(ip_data, date_data):
+            fecha = datetime.strptime(fecha_str, '%d/%m/%Y').date()
+            c.execute("INSERT INTO user_ips VALUES (?, ?, ?)", (username, ip, fecha))
 
 # Guardar los cambios
 conn.commit()
