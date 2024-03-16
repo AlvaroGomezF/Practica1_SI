@@ -53,18 +53,19 @@ c.execute('''CREATE TABLE IF NOT EXISTS user_ips (
                 fecha DATE,
                 FOREIGN KEY (username) REFERENCES users(username)
             )''')
-'''
+
+
 # Insertar datos en la tabla de IP y fechas
 for user in users_data['usuarios']:
     username = list(user.keys())[0]  # Obtiene el nombre de usuario
     ip_data = user[username]['ips']   # Obtiene los datos de IP
-    for ip_info in ip_data:
-        # Convertir la fecha de string a objeto datetime
-        fecha = datetime.strptime(ip_info['fecha'], '%d-%m-%Y').date()
-        c.execute("INSERT INTO user_ips VALUES (?, ?, ?)", (username, ip_info['ip'], fecha))
+    date_data = user[username]['fechas']  #Obtiene los datos de las fechas
 
+    # Iterar sobre las IPs y fechas al mismo tiempo
+    for ip, fecha_str in zip(ip_data, date_data):
+        fecha = datetime.strptime(fecha_str, '%d/%m/%Y').date()
+        c.execute("INSERT INTO user_ips VALUES (?, ?, ?)", (username, ip, fecha))
 
-'''
 # Guardar los cambios
 conn.commit()
 conn.close()
