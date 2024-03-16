@@ -29,11 +29,11 @@ def calcular_hashes(file_name):
         hashed_passwords = set(hashlib.md5(passwd.encode()).hexdigest() for passwd in passwords)
     return hashed_passwords
 
-def comparar_hashes(hashes_base_datos, hashes_diccionario):
+def comparar_hashes(hashes_bbdd, hashes_diccionary):
     resultado = []
 
-    for i in hashes_base_datos:
-        if i in hashes_diccionario:
+    for i in hashes_bbdd:
+        if i in hashes_diccionary:
             resultado.append("Debil")
         else:
             resultado.append("Fuerte")
@@ -52,18 +52,18 @@ def estadisticas():
     hashes_sry = calcular_hashes('SRY.txt')
 
     # Calcular dificultad de las contraseñas
-    contrasenas['dificultad'] = comparar_hashes(contrasenas['contrasena'], hashes_sry)
+    contrasenas['Robustez'] = comparar_hashes(contrasenas['contrasena'], hashes_sry)
 
     # Convertir permisos a tipo entero
-    correos['permisos'] = correos['permisos'].astype(int)
+    correos['Rol'] = correos['permisos'].replace({0: 'Usuario', 1: 'Administrador'})
 
     # Calcular valores ausentes para correos y contraseñas
     correos['perdido'] = calcular_valores_ausentes(correos)
     contrasenas['perdido'] = calcular_valores_ausentes(contrasenas)
     # Calcular estadísticas para correos
-    stats_correos = correos.groupby('permisos')['phishing_emails'].agg(
+    stats_correos = correos.groupby('Rol')['phishing_emails'].agg(
         ['count', 'median', 'mean', 'var', 'max', 'min']).rename(columns={
-        'count': 'Número de observaciones',
+        'count': 'Cantidad',
         'median': 'Mediana',
         'mean': 'Media',
         'var': 'Varianza',
@@ -71,15 +71,15 @@ def estadisticas():
         'min': 'Mínimo',
     })
     # Calcular la suma de valores nulos
-    valores_nulos_correos = correos.groupby('permisos')['perdido'].sum()
-    valores_nulos_contrasenas = contrasenas.groupby('dificultad')['perdido'].sum()
+    valores_nulos_correos = correos.groupby('Rol')['perdido'].sum()
+    valores_nulos_contrasenas = contrasenas.groupby('Robustez')['perdido'].sum()
 
 
 
     # Calcular estadísticas para contraseñas
-    stats_contrasenas = contrasenas.groupby('dificultad')['phishing_emails'].agg(
+    stats_contrasenas = contrasenas.groupby('Robustez')['phishing_emails'].agg(
         ['count', 'median', 'mean', 'var', 'max', 'min']).rename(columns={
-        'count': 'Número de observaciones',
+        'count': 'Cantidad',
         'median': 'Mediana',
         'mean': 'Media',
         'var': 'Varianza',
