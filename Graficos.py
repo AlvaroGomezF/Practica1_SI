@@ -85,3 +85,71 @@ plt.show()
 #Apartado 3
 
 
+
+#Apartado 4
+query4='''SELECT creacion AS añosBueno FROM legal
+WHERE cookies = 1 AND aviso = 1 AND proteccion_de_datos = 1
+'''
+
+queryMalos='''SELECT creacion AS añosMalo FROM legal
+WHERE cookies = 0 OR aviso = 0 OR proteccion_de_datos = 0'''
+
+
+dfAñosBueno=pd.read_sql_query(query4,conn)
+dfAñosMalo=pd.read_sql_query(queryMalos,conn)
+print(dfAñosBueno)
+print(len(dfAñosBueno))
+print(dfAñosMalo)
+print(len(dfAñosMalo))
+
+mediaAñosBueno=dfAñosBueno['añosBueno'].mean()
+mediaAñosMalo=dfAñosMalo['añosMalo'].mean()
+
+print(mediaAñosBueno,mediaAñosMalo)
+
+listaAños=[mediaAñosBueno, mediaAñosMalo]
+listaCategorias=["Webs cumplen políticas","Webs no cumplen políticas"]
+
+
+# Crear el gráfico de barras
+plt.bar(listaCategorias, listaAños, color=['green', 'red'])
+plt.xlabel('Categoría de Webs')
+plt.ylabel('Años de creación (media)')
+plt.title('Media de años de creación según cumplimiento de políticas')
+plt.ylim(2010, 2015)
+plt.show()
+#print(dfAñosBueno['webs_totales'])
+
+
+
+query = '''
+SELECT creacion AS año,
+       SUM(CASE WHEN cookies = 1 AND aviso = 1 AND proteccion_de_datos = 1 THEN 1 ELSE 0 END) AS añosBueno,
+       SUM(CASE WHEN cookies = 0 OR aviso = 0 OR proteccion_de_datos = 0 THEN 1 ELSE 0 END) AS añosMalo
+FROM legal
+GROUP BY creacion
+'''
+
+# Ejecutar la consulta y guardar los resultados en un DataFrame
+df = pd.read_sql_query(query, conn)
+
+# Generar una lista de todos los años desde 2000 hasta 2020
+todos_los_años = pd.DataFrame({'año': range(2000, 2024)})
+
+# Fusionar el DataFrame de todos los años con los datos obtenidos de la consulta
+df = todos_los_años.merge(df, on='año', how='left').fillna(0)
+
+# Crear el gráfico de barras
+ancho_barra = 0.4  # Ancho de cada barra
+plt.bar(df['año'] - ancho_barra/2, df['añosBueno'], width=ancho_barra, color='green', label='Buenos')
+plt.bar(df['año'] + ancho_barra/2, df['añosMalo'], width=ancho_barra, color='red', label='Malos')
+
+plt.xlabel('Año de Creación')
+plt.ylabel('Cantidad de Webs')
+plt.title('Cantidad de Webs Buenas y Malas por Año de Creación')
+plt.legend()
+
+plt.xticks(range(2000, 2024), rotation=45)  # Establecer las etiquetas del eje x para mostrar todos los años
+
+plt.tight_layout()
+plt.show()
