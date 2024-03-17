@@ -21,7 +21,7 @@ def compararHashes(hashes_bd,hashes_dicc):
     return resultado
 
 conn = sqlite3.connect('BBDD.db')
-# Consulta para obtener las fechas de cambio de contraseña por usuario
+# Apartado 1
 query = """
     SELECT u.username, u.permisos, ui.fecha
     FROM users u
@@ -84,8 +84,33 @@ plt.title('Usuarios con mayor criticidad')
 plt.show()
 #Apartado 3
 
+query='''SELECT web,cookies,aviso,proteccion_de_datos,creacion from legal'''
+df=pd.read_sql_query(query,conn)
+df['total']=df['cookies']+df['aviso']+df['proteccion_de_datos']
 
+df=df.sort_values(by='total',ascending=True)
+paginas5=df.nsmallest(5,'total')
+# Configurar los datos para el gráfico de barras
+web_creacion = paginas5.apply(lambda row: f"{row['web']} ({row['creacion']})", axis=1)
+cookies = paginas5['cookies']
+aviso = paginas5['aviso']
+proteccion_de_datos = paginas5['proteccion_de_datos']
 
+x = range(len(web_creacion))
+
+# Dibujar el gráfico de barras
+plt.figure(figsize=(10, 6))
+plt.bar(x, cookies, width=0.2, label='Cookies')
+plt.bar([i + 0.2 for i in x], aviso, width=0.2, label='Aviso')
+plt.bar([i + 0.4 for i in x], proteccion_de_datos, width=0.2, label='Protección de Datos')
+
+plt.xlabel('Páginas Web')
+plt.ylabel('Número de Políticas')
+plt.title('Políticas por Página Web')
+plt.xticks([i + 0.2 for i in x], web_creacion)
+plt.legend()
+plt.tight_layout()
+plt.show()
 #Apartado 4
 query4='''SELECT creacion AS añosBueno FROM legal
 WHERE cookies = 1 AND aviso = 1 AND proteccion_de_datos = 1
@@ -118,9 +143,8 @@ plt.ylabel('Años de creación (media)')
 plt.title('Media de años de creación según cumplimiento de políticas')
 plt.ylim(2010, 2015)
 plt.show()
-#print(dfAñosBueno['webs_totales'])
 
-
+#Otra grafico mas explicativo
 
 query = '''
 SELECT creacion AS año,
