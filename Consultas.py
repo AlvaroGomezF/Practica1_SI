@@ -6,32 +6,38 @@ import matplotlib.pyplot as plt
 # Conectarse a la base de datos
 conn = sqlite3.connect('BBDD.db')
 
-#Ejercicio 1:
+#Apartado 1:
 query="SELECT COUNT(*) AS num_muestras FROM users"
 df = pd.read_sql_query(query, conn)
 num_muestras = df['num_muestras'].iloc[0]  # Obtener el valor de 'num_muestras' de la primera fila
 print("Apartado 1")
 print("Número total de muestras:", num_muestras)
 
-#Ejercicio 2:
+#Apartado 2:
 query = "SELECT ip, fecha FROM user_ips"
+# Leer los datos en un DataFrame
 df = pd.read_sql_query(query, conn)
-total_fecha=df['fecha'].nunique()
-media_fechas = total_fecha / len(df)  # La media es el total de fechas únicas dividido por el total de registros
-desviacion_fechas = np.sqrt(((df['ip'].value_counts() - media_fechas) ** 2).sum() / len(df))  # La desviación estándar
-print("Apartado 2")
-print("Media de IPs detectadas:", media_fechas)
-print("Desviación estándar de IPs detectadas:", desviacion_fechas)
+# Convertir la columna 'fecha' a tipo de dato de fecha
+df['fecha'] = pd.to_datetime(df['fecha'])
 
-# Ejercicio 3:
+# Calcular la media y la desviación estándar de las fechas
+media_fechas = df['fecha'].mean()
+desviacion_fechas = df['fecha'].std()
+
+print("Apartado 2")
+print("Media de fechas detectadas:", media_fechas)
+print("Desviación estándar de las fechas detectadas:", desviacion_fechas)
+
+
+# Apartado 3:
 total_ips = df['ip'].nunique()
 media_ips = total_ips / len(df)  # La media es el total de IPs únicas dividido por el total de registros
 desviacion_ips = np.sqrt(((df['ip'].value_counts() - media_ips) ** 2).sum() / len(df))  # La desviación estándar
 print("Apartado 3")
-print("Media de fechas:", media_ips)
-print("Desviación estándar de fechas :", desviacion_ips)
+print("Media de IPs:", media_ips)
+print("Desviación estándar de IPs :", desviacion_ips)
 
-#Ejercicio 4:
+#Apartado 4:
 print("Apartado 4")
 query1 = """
     SELECT SUM(cliclados_emails) AS total_phishing_emails
@@ -49,7 +55,7 @@ df2 = pd.read_sql_query(query2, conn)
 desviacion=df2['cliclados_emails'].std()
 print("Desviacion tipica clicados : "+str(desviacion))
 
-#Ejercicio 5:
+#Apartado 5:
 print("Apartado 5")
 query = """
     SELECT MIN(total_emails) AS min_total_emails, MAX(total_emails) AS max_total_emails
@@ -64,7 +70,7 @@ print("Valor mínimo del total de emails recibidos:", min_total_emails)
 print("Valor máximo del total de emails recibidos:", max_total_emails)
 
 
-#Ejercicio 6:
+#Apartado 6:
 print("Apartado 6")
 query = """
     SELECT MIN(cliclados_emails) AS min_emails, MAX(cliclados_emails) AS max_emails
