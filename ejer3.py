@@ -23,12 +23,30 @@ def obtener_datos():
 
     return contrasenas, correos
 
+# Funcion para obtener los usuarios con algun campo vacio
+def obtener_usuarios_campos_vacios():
+    conn = sqlite3.connect('BBDD.db')
+    c = conn.cursor()
+
+    c.execute("SELECT COUNT(DISTINCT username) FROM users WHERE (telefono='None' OR contrasena='None' OR provincia='None') AND permisos=0")
+    cont_campos_vacios_usuarios = c.fetchone()[0]
+
+    c.execute("SELECT COUNT(DISTINCT username) FROM users WHERE (telefono='None' OR contrasena='None' OR provincia='None') AND permisos=1")
+    cont_campos_vacios_admin = c.fetchone()[0]
+
+    conn.close()
+
+    return cont_campos_vacios_usuarios, cont_campos_vacios_admin
+
+# Funcion para calcular los hashes de las contraseñas almacenadas en un archivo de texto
 def calcular_hashes(file_name):
     with open(file_name, 'r', encoding='utf-8') as file:
         passwords = file.read().splitlines()
         hashed_passwords = set(hashlib.md5(passwd.encode()).hexdigest() for passwd in passwords)
     return hashed_passwords
 
+# Funcion para comparar los hashes de las contraseñas almacenadas en la BBDD
+# con los hashes del diccionario
 def comparar_hashes(hashes_bbdd, hashes_diccionary):
     resultado = []
 
@@ -39,10 +57,6 @@ def comparar_hashes(hashes_bbdd, hashes_diccionary):
             resultado.append("Fuerte")
 
     return resultado
-
-def calcular_valores_ausentes(df):
-    valores_ausentes = df['phishing_emails'].isnull().astype(int)
-    return valores_ausentes
 
 def estadisticas():
     # Obtener datos de la base de datos
@@ -57,9 +71,6 @@ def estadisticas():
     # Convertir permisos a tipo entero
     correos['Rol'] = correos['permisos'].replace({0: 'Usuario', 1: 'Administrador'})
 
-    # Calcular valores ausentes para correos y contraseñas
-    correos['perdido'] = calcular_valores_ausentes(correos)
-    contrasenas['perdido'] = calcular_valores_ausentes(contrasenas)
     # Calcular estadísticas para correos
     stats_correos = correos.groupby('Rol')['phishing_emails'].agg(
         ['count', 'median', 'mean', 'var', 'max', 'min']).rename(columns={
@@ -70,11 +81,6 @@ def estadisticas():
         'max': 'Máximo',
         'min': 'Mínimo',
     })
-    # Calcular la suma de valores nulos
-    valores_nulos_correos = correos.groupby('Rol')['perdido'].sum()
-    valores_nulos_contrasenas = contrasenas.groupby('Robustez')['perdido'].sum()
-
-
 
     # Calcular estadísticas para contraseñas
     stats_contrasenas = contrasenas.groupby('Robustez')['phishing_emails'].agg(
@@ -87,13 +93,9 @@ def estadisticas():
         'min': 'Mínimo',
     })
 
-    # Agregar columnas de valores ausentes a las estadísticas
-    stats_correos['Número de valores ausentes (missing)'] = valores_nulos_correos
-    stats_contrasenas['Número de valores ausentes (missing)'] = valores_nulos_contrasenas
-
     # Redondear los valores estadísticos
-    stats_correos = stats_correos.round(4)
-    stats_contrasenas = stats_contrasenas.round(4)
+    stats_correos = stats_correos.round(2)
+    stats_contrasenas = stats_contrasenas.round(2)
 
     return stats_correos, stats_contrasenas
 
@@ -108,3 +110,10 @@ print()
 # Imprimir las estadísticas para las contraseñas
 print("Estadísticas para contraseñas:")
 print(stats_contrasenas)
+
+cont_campos_vacios_usuarios , cont_campos_vacios_admin= obtener_usuarios_campos_vacios()
+print("\n")
+print("Número de usuarios con campos vacíos: " + str(cont_campos_vacios_usuarios))
+print("Número de administradores con campos vacíos: " + str(cont_campos_vacios_admin))
+
+

@@ -5,6 +5,7 @@ password
 iloveyou
 princess
 1234567
+rockyou
 12345678
 abc123
 nicole
@@ -497,16 +498,3 @@ genesis
 amigos
 snickers
 xavier
-turtle
-marlon
-linkinpark
-claire
-stupid
-147852
-marina
-garcia
-fuckyou1
-diego
-brandy
-letmein
-hockey
