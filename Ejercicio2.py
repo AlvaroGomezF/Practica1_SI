@@ -3,8 +3,21 @@ import numpy as np
 import sqlite3
 import matplotlib.pyplot as plt
 
-# Conectarse a la base de datos
 conn = sqlite3.connect('BBDD.db')
+def obtenerDataQuery():
+    # Conectarse a la base de datos
+    conn = sqlite3.connect('BBDD.db')
+    query1 = "SELECT COUNT(*) AS num_muestras FROM users"
+    query2 = "SELECT ip, fecha FROM user_ips"
+    query3 = "SELECT SUM(cliclados_emails) AS total_phishing_emails FROM users "
+
+    df1=pd.read_sql_query(query1,conn)
+    df2=pd.read_sql_query(query2,conn)
+    df3=pd.read_sql_query(query3,conn)
+
+    resultado={
+        'num_muestras'
+    }
 
 #Apartado 1:
 query="SELECT COUNT(*) AS num_muestras FROM users"
