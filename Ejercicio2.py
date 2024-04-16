@@ -17,7 +17,6 @@ def obtenerDataQuery():
 
     resultado={
         'num_muestras':df1['num_muestras'].iloc[0]
-        'media'
     }
 
 #Apartado 1:

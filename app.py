@@ -4,7 +4,7 @@ import Ejercicio2
 import Ejercicio3
 import Ejercicio4
 import matplotlib
-app = Flask(_name_)
+app = Flask(__name__)
 
 
 @app.route('/')
