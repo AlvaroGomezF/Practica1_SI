@@ -13,6 +13,6 @@ def index():
 
 @app.route("/ejercicio2")
 def ejercicio2():
-    df_results=ejercicio2.obtenerData
+    df_results=Ejercicio2.obtenerDataQuery()
 
 

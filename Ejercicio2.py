@@ -16,7 +16,8 @@ def obtenerDataQuery():
     df3=pd.read_sql_query(query3,conn)
 
     resultado={
-        'num_muestras'
+        'num_muestras':df1['num_muestras'].iloc[0]
+        'media'
     }
 
 #Apartado 1:
