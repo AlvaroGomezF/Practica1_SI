@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultados del Ejercicio 3</title>
+</head>
+<body>
+    <h1>Estadísticas para usuarios (phishing_emails):</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Rol</th>
+                <th>Cantidad</th>
+                <th>Mediana</th>
+                <th>Media</th>
+                <th>Varianza</th>
+                <th>Máximo</th>
+                <th>Mínimo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for index, row in stats_correos.iterrows() %}
+            <tr>
+                <td>{{ index }}</td>
+                <td>{{ row['Cantidad'] }}</td>
+                <td>{{ row['Mediana'] }}</td>
+                <td>{{ row['Media'] }}</td>
+                <td>{{ row['Varianza'] }}</td>
+                <td>{{ row['Máximo'] }}</td>
+                <td>{{ row['Mínimo'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h1>Estadísticas para contraseñas:</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Robustez</th>
+                <th>Cantidad</th>
+                <th>Mediana</th>
+                <th>Media</th>
+                <th>Varianza</th>
+                <th>Máximo</th>
+                <th>Mínimo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for index, row in stats_contrasenas.iterrows() %}
+            <tr>
+                <td>{{ index }}</td>
+                <td>{{ row['Cantidad'] }}</td>
+                <td>{{ row['Mediana'] }}</td>
+                <td>{{ row['Media'] }}</td>
+                <td>{{ row['Varianza'] }}</td>
+                <td>{{ row['Máximo'] }}</td>
+                <td>{{ row['Mínimo'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h1>Número de usuarios con campos vacíos:</h1>
+    <p>{{ cont_campos_vacios_usuarios }}</p>
+
+    <h1>Número de administradores con campos vacíos:</h1>
+    <p>{{ cont_campos_vacios_admin }}</p>
+</body>
+</html>
