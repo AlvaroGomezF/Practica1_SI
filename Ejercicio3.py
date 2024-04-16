@@ -115,5 +115,3 @@ cont_campos_vacios_usuarios , cont_campos_vacios_admin= obtener_usuarios_campos_
 print("\n")
 print("Número de usuarios con campos vacíos: " + str(cont_campos_vacios_usuarios))
 print("Número de administradores con campos vacíos: " + str(cont_campos_vacios_admin))
-
-

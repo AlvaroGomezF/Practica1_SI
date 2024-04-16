@@ -1,31 +1,13 @@
+from datetime import datetime
+
 import pandas as pd
 import numpy as np
 import sqlite3
 import hashlib
 
 
-
 conn = sqlite3.connect('BBDD.db')
 cursor = conn.cursor()
-
-# Obtener datos de conexiones de usuarios por día
-query = """
-    SELECT ip, fecha
-    FROM user_ips
-"""
-df = pd.read_sql_query(query, conn)
-
-# Convertir la columna 'fecha' a tipo de dato de fecha
-df['fecha'] = pd.to_datetime(df['fecha'])
-
-# Crear una nueva columna 'dia' que contenga solo la fecha (sin la hora) para agrupar por día
-df['dia'] = df['fecha'].dt.date
-
-# Contar conexiones por día de usuario
-conexiones_por_dia = df.groupby(['dia', 'ip']).size().reset_index(name='conexiones')
-
-print("Conexiones por día de usuario:")
-print(conexiones_por_dia)
 
 
 
@@ -33,18 +15,22 @@ cursor.execute('''
     CREATE TABLE IF NOT EXISTS usuarioslogin (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE,
-        password TEXT
+        password TEXT,
+        fecha DATE
     )
 ''')
 conn.commit()
 
-def registrar_usuario(username, password):
+def registrar_usuario(username, password, fecha=None):
+    # Si no se proporciona una fecha, se utiliza la fecha y hora actual
+    if fecha is None:
+        fecha = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     # Hash de la contraseña
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
     try:
         cursor.execute('''
-            INSERT INTO usuarioslogin (username, password) VALUES (?, ?)
-        ''', (username, hashed_password))
+            INSERT INTO usuarioslogin (username, password, fecha) VALUES (?, ?, ?)
+        ''', (username, hashed_password, fecha))
         conn.commit()
         print("Usuario registrado exitosamente.")
     except sqlite3.IntegrityError:
@@ -63,7 +49,25 @@ def verificar_credenciales(username, password):
         print("Credenciales incorrectas.")
 
 # Ejemplo de registro de usuario
-registrar_usuario('usuario2', 'password1234')
+registrar_usuario('usuario2', 'password123', '2024-04-17 11:58:00')
 
 # Ejemplo de inicio de sesión
-verificar_credenciales('usuario2', 'password1234')
+verificar_credenciales('usuario1', 'password123')
+
+# Obtener datos de conexiones de usuarios por día
+query = """
+    SELECT username, fecha
+    FROM usuarioslogin
+"""
+df = pd.read_sql_query(query, conn)
+
+# Convertir la columna 'fecha' a tipo de dato de fecha
+df['fecha'] = pd.to_datetime(df['fecha'])
+
+# Crear una nueva columna 'dia' que contenga solo la fecha (sin la hora) para agrupar por día
+df['dia'] = df['fecha'].dt.date
+
+# Contar conexiones por día de usuario
+conexiones_por_dia = df.groupby(['dia', 'username'])['username'].nunique().reset_index(name='conexiones')
+print("Conexiones por día de usuario:")
+print(conexiones_por_dia)

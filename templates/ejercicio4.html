@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 4</title>
+</head>
+<body>
+    <h1>Media de tiempo de cambio de contraseña por Tipo de Usuario</h1>
+    <img src="data:image/png;base64,{{ datos['grafico_media_tiempo'] }}" alt="Gráfico de Media de Tiempo">
+
+    <h1>Usuarios con mayor criticidad</h1>
+    <img src="data:image/png;base64,{{ datos['grafico_usuarios_criticos'] }}" alt="Gráfico de Usuarios Críticos">
+
+    <h1>Políticas por Página Web</h1>
+    <img src="data:image/png;base64,{{ datos['grafico_politicas_por_web'] }}" alt="Gráfico de Políticas por Página Web">
+
+    <h1>Media de años de creación según cumplimiento de políticas</h1>
+    <img src="data:image/png;base64,{{ datos['grafico_media_anos_creacion'] }}" alt="Gráfico de Media de Años de Creación">
+
+    <h1>Cantidad de Webs Buenas y Malas por Año de Creación</h1>
+    <img src="data:image/png;base64,{{ datos['grafico_webs_buenas_malas'] }}" alt="Gráfico de Webs Buenas y Malas por Año de Creación">
+</body>
+</html>
