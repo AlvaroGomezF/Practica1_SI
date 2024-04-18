@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de la Consulta de Usuarios Críticos</title>
+</head>
+<body>
+    <h2>Resultados de la Consulta de Usuarios Críticos</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Correo Phishing</th>
+                <th>Correos Cliclados</th>
+                <th>Probabilidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in resultados.iterrows() %}
+                <tr>
+                    <td>{{ usuario[1]['username'] }}</td>
+                    <td>{{ usuario[1]['phishing_emails'] }}</td>
+                    <td>{{ usuario[1]['cliclados_emails'] }}</td>
+                    <td>{{ usuario[1]['probabilidad'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

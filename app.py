@@ -41,3 +41,12 @@ def ejercicio3():
 def ejercicio4_route():
     datos = Ejercicio4.obtener_datos_ejercicio4()
     return render_template('ejercicio4.html',datos=datos)
+
+@app.route('/Ejercicio1', methods=['GET'])
+def consultar_usuarios_criticos():
+    if request.method == 'GET':
+        num_usuarios_criticos = int(request.args.get('num_usuarios_criticos'))
+        # Lógica para realizar la consulta de usuarios críticos con el número proporcionado
+        # Supongamos que tienes una función que realiza la consulta y devuelve los resultados
+        resultados = Ejercicio4.consultar_usuarios_criticos_funcion(num_usuarios_criticos)
+        return render_template('resultados_usuarios_criticos.html', resultados=resultados)
