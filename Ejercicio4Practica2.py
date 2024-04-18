@@ -10,7 +10,6 @@ conn = sqlite3.connect('BBDD.db')
 cursor = conn.cursor()
 
 
-
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS usuarioslogin (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,8 +35,8 @@ def registrar_usuario(username, password, fecha=None):
     except sqlite3.IntegrityError:
         print("El nombre de usuario ya está en uso.")
 
-def verificar_credenciales(username, password):
-    # Hash de la contraseña proporcionada
+def iniciar_sesion(username, password):
+    # Verificar credenciales
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
     cursor.execute('''
         SELECT * FROM usuarioslogin WHERE username=? AND password=?
@@ -45,29 +44,26 @@ def verificar_credenciales(username, password):
     user = cursor.fetchone()
     if user:
         print("Inicio de sesión exitoso.")
+        return True
     else:
         print("Credenciales incorrectas.")
+        return False
 
-# Ejemplo de registro de usuario
-registrar_usuario('usuario2', 'password123', '2024-04-17 11:58:00')
+def contar_sesiones_por_dia(username, fecha):
+    cursor.execute('''
+        SELECT COUNT(*) FROM usuarioslogin WHERE username=? AND strftime('%Y-%m-%d', fecha)=?
+    ''', (username, fecha))
+    sesiones = cursor.fetchone()[0]
+    print(f"El usuario {username} ha iniciado sesión {sesiones} veces el {fecha}.")
+
+# Ejemplo de registro de usuario solo si no está registrado previamente
+try:
+    registrar_usuario('usuario1', 'password123', '2024-06-19 11:59:00')
+except:
+    pass
 
 # Ejemplo de inicio de sesión
-verificar_credenciales('usuario1', 'password123')
+iniciar_sesion('usuario1', 'password123')
 
-# Obtener datos de conexiones de usuarios por día
-query = """
-    SELECT username, fecha
-    FROM usuarioslogin
-"""
-df = pd.read_sql_query(query, conn)
-
-# Convertir la columna 'fecha' a tipo de dato de fecha
-df['fecha'] = pd.to_datetime(df['fecha'])
-
-# Crear una nueva columna 'dia' que contenga solo la fecha (sin la hora) para agrupar por día
-df['dia'] = df['fecha'].dt.date
-
-# Contar conexiones por día de usuario
-conexiones_por_dia = df.groupby(['dia', 'username'])['username'].nunique().reset_index(name='conexiones')
-print("Conexiones por día de usuario:")
-print(conexiones_por_dia)
+# Contar las sesiones del usuario 'usuario1' el 2024-06-19
+contar_sesiones_por_dia('usuario1', '2024-06-19')
