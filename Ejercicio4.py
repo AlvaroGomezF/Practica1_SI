@@ -6,6 +6,32 @@ import matplotlib.pyplot as plt
 import io
 import base64
 
+def obtener_usuarios_criticos(num_usuarios_criticos):
+    conn = sqlite3.connect('BBDD.db')
+    query1 = '''
+    SELECT username, contrasena
+    FROM users
+    '''
+    query2 = '''
+    SELECT username, phishing_emails, cliclados_emails
+    FROM users
+    '''
+    dfUsuarios = pd.read_sql_query(query1, conn)
+    dfCorreos = pd.read_sql_query(query2, conn)
+
+    dfCorreos['probabilidad'] = dfCorreos['cliclados_emails'] / dfCorreos['phishing_emails']
+    hashes_sry = calcular_hashes('SRY.txt')
+    dfUsuarios['robustez'] = compararHashes(dfUsuarios['contrasena'], hashes_sry)
+    usuariosDebiles = dfUsuarios[dfUsuarios['robustez'] == 'Debil']
+
+    usuariosMasCriticos = usuariosDebiles.merge(dfCorreos, on='username')
+
+    usuarios_criticos = usuariosMasCriticos.nlargest(num_usuarios_criticos, 'probabilidad')
+
+    return usuarios_criticos
+
+
+
 def calcular_hashes(file_name):
     with open(file_name, 'r', encoding='utf-8') as file:
         passwords = file.read().splitlines()
