@@ -53,3 +53,11 @@ def consultar_usuarios_criticos():
         num_usuarios_criticos = int(request.args.get('num_usuarios_criticos'))
         resultados = Ejercicio4.obtener_usuarios_criticos(num_usuarios_criticos)
         return render_template('resultados_usuarios_criticos.html', resultados=resultados)
+
+@app.route('/Ejercicio3P2')
+def mostrar_vulnerabilidades():
+    vulnerabilidades = Ejercicio3Practica2.obtener_ultimas_vulnerabilidades()
+    if vulnerabilidades:
+        return render_template('Ejercicio3P2.html', vulnerabilidades=vulnerabilidades)
+    else:
+        return "Error al obtener las vulnerabilidades"
