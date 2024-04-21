@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de la Consulta de Páginas Web Desactualizadas</title>
+</head>
+<body>
+    <h2>Resultados de la Consulta de Páginas Web Desactualizadas</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Web</th>
+                <th>Cookies</th>
+                <th>Aviso</th>
+                <th>Protección de Datos</th>
+                <th>Año de Creación</th>
+                <th>Políticas No Cumplidas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pagina in paginas_desactualizadas.iterrows() %}
+                <tr>
+                    <td>{{ pagina[1]['web'] }}</td>
+                    <td>{{ pagina[1]['cookies'] }}</td>
+                    <td>{{ pagina[1]['aviso'] }}</td>
+                    <td>{{ pagina[1]['proteccion_de_datos'] }}</td>
+                    <td>{{ pagina[1]['creacion'] }}</td>
+                    <td>{{ pagina[1]['politicas_no_cumplidas'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

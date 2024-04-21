@@ -2,6 +2,7 @@ import json
 from flask import Flask, render_template, request, redirect, url_for
 import Ejercicio2
 import Ejercicio3
+import Ejercicio3Practica2
 import Ejercicio4
 import matplotlib
 app = Flask(__name__)
@@ -42,8 +43,12 @@ def ejercicio4_route():
     datos = Ejercicio4.obtener_datos_ejercicio4()
     return render_template('ejercicio4.html',datos=datos)
 
-@app.route('/consulta-usuarios-criticos', methods=['GET'])
+@app.route('/consulta-ejer-1', methods=['GET'])
 def mostrar_formulario():
+    return render_template('EleccionE1.html')
+
+@app.route('/consulta-usuarios-criticos', methods=['GET'])
+def mostrar_formulario2():
     return render_template('Ejercicio1P2.html')
 
 
@@ -53,6 +58,18 @@ def consultar_usuarios_criticos():
         num_usuarios_criticos = int(request.args.get('num_usuarios_criticos'))
         resultados = Ejercicio4.obtener_usuarios_criticos(num_usuarios_criticos)
         return render_template('resultados_usuarios_criticos.html', resultados=resultados)
+
+@app.route('/consulta-paginas-desactualizadas', methods=['GET'])
+def mostrar_formulario_paginas_desactualizadas():
+    return render_template('formulario_paginas_desactualizadas.html')
+
+@app.route('/consultar-paginas-desactualizadas', methods=['GET'])
+def consultar_paginas_desactualizadas():
+    if request.method == 'GET':
+        num_paginas_desactualizadas = int(request.args.get('num_paginas_desactualizadas'))
+        paginas_desactualizadas = Ejercicio4.obtener_top_paginas_desactualizadas(num_paginas_desactualizadas)
+        return render_template('resultados_paginas_desactualizadas.html', paginas_desactualizadas=paginas_desactualizadas)
+
 
 @app.route('/Ejercicio3P2')
 def mostrar_vulnerabilidades():

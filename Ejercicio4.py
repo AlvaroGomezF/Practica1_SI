@@ -274,3 +274,22 @@ def obtener_datos_ejercicio4():
         'grafico_politicas_por_web': grafico_politicas,
         'grafico_media_anos_creacion': grafica_media_anos_creacion,
     }
+
+def obtener_top_paginas_desactualizadas(num_paginas):
+    conn = sqlite3.connect('BBDD.db')
+
+    query = '''
+    SELECT web, cookies, aviso, proteccion_de_datos, creacion
+    FROM legal
+    '''
+    df = pd.read_sql_query(query, conn)
+    df['politicas_no_cumplidas'] = df['cookies'] + df['aviso'] + df['proteccion_de_datos']
+
+    df_sorted = df.sort_values(by=['politicas_no_cumplidas', 'creacion'], ascending=[False, True])
+
+    top_paginas_desactualizadas = df_sorted.head(num_paginas)
+
+    return top_paginas_desactualizadas
+
+top_paginas = obtener_top_paginas_desactualizadas(2)
+print(top_paginas)

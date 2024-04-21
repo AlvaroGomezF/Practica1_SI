@@ -1,7 +1,7 @@
 import requests
 from flask import Flask, render_template
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 def obtener_ultimas_vulnerabilidades():
     url = "https://cve.circl.lu/api/last"
