@@ -5,6 +5,9 @@ import Ejercicio3
 import Ejercicio3Practica2
 import Ejercicio4
 import matplotlib
+
+import Ejercicio5Clasificadores
+
 app = Flask(__name__)
 
 
@@ -78,3 +81,27 @@ def mostrar_vulnerabilidades():
         return render_template('Ejercicio3P2.html', vulnerabilidades=vulnerabilidades)
     else:
         return "Error al obtener las vulnerabilidades"
+
+@app.route('/consulta-ejer-5', methods=['GET'])
+def eleccion_modelo():
+    return render_template('EleccionE5.html')
+@app.route('/regresionLineal', methods=['GET'])
+def regresionLinealForm():
+    return render_template('formularioRegresionLineal.html')
+
+@app.route('/devolverAnalisisRegresionLineal', methods=['GET'])
+def regresionLineal():
+    if request.method=='GET':
+        nombre=(request.args.get('nombre'))
+        telefono=(request.args.get('telefono'))
+        provincia=(request.args.get('provincia'))
+        #permisos=request.form['permisos']
+        total_enviados=(request.args.get('total_enviados'))
+        phishing=(request.args.get('phishing'))
+        clicados=(request.args.get('clicados'))
+
+        usuario=(nombre,telefono,provincia,total_enviados,phishing,clicados)
+        emails=(total_enviados,phishing,clicados)
+        resultado=Ejercicio5Clasificadores.regresionLineal(emails)
+        print(resultado)
+        return render_template('resultados_clasificador',usuario=usuario,resultado=resultado)
