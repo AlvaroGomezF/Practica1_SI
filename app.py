@@ -113,6 +113,9 @@ def regresionLineal():
         return render_template('resultados_clasificador',usuario=usuario,resultado=resultado)
 
 
+@app.route('/Ejercicio4P2')
+def ejercicio4_p2():
+    return render_template('Ejercicio4P2.html')
 
 
 @app.route('/registro', methods=['GET', 'POST'])
