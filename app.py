@@ -129,10 +129,10 @@ def registro():
         Ejercicio4Practica2.registrar_usuario(username, password, fecha)
         return redirect(url_for('index'))
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/iniciar', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        return render_template('login.html')
+        return render_template('formulario_login.html')
     elif request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
