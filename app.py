@@ -1,5 +1,9 @@
 import json
 from flask import Flask, render_template, request, redirect, url_for
+from datetime import datetime
+import pandas as pd
+import sqlite3
+import hashlib
 import Ejercicio2
 import Ejercicio3
 import Ejercicio3Practica2
@@ -7,9 +11,11 @@ import Ejercicio4
 import matplotlib
 
 import Ejercicio5Clasificadores
+import Ejercicio4Practica2
 
 app = Flask(__name__)
-
+conn = sqlite3.connect('BBDD.db')
+cursor = conn.cursor()
 
 @app.route('/')
 def index():
@@ -105,3 +111,41 @@ def regresionLineal():
         resultado=Ejercicio5Clasificadores.regresionLineal(emails)
         print(resultado)
         return render_template('resultados_clasificador',usuario=usuario,resultado=resultado)
+
+
+
+
+@app.route('/registro', methods=['GET', 'POST'])
+def registro():
+    if request.method == 'GET':
+        return render_template('registro.html')
+    elif request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        fecha = request.form.get('fecha')
+        Ejercicio4Practica2.registrar_usuario(username, password, fecha)
+        return redirect(url_for('index'))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    elif request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        Ejercicio4Practica2.iniciar_sesion(username, password)
+        return redirect(url_for('index'))
+
+@app.route('/conexiones')
+def conexiones():
+    query = "SELECT username, fecha FROM usuarioslogin"
+    df = pd.read_sql_query(query, conn)
+    df['fecha'] = pd.to_datetime(df['fecha'])
+    df['dia'] = df['fecha'].dt.date
+    conexiones_por_dia = df.groupby(['dia', 'username']).size().reset_index(name='conexiones')
+    return render_template('conexiones.html', conexiones_por_dia=conexiones_por_dia)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
