@@ -118,10 +118,10 @@ def ejercicio4_p2():
     return render_template('Ejercicio4P2.html')
 
 
-@app.route('/registro', methods=['GET', 'POST'])
+@app.route('/registrar', methods=['GET', 'POST'])
 def registro():
     if request.method == 'GET':
-        return render_template('registro.html')
+        return render_template('formulario_registro.html')
     elif request.method == 'POST':
         username = request.form['username']
         password = request.form['password']

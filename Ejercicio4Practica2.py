@@ -21,6 +21,8 @@ cursor.execute('''
 conn.commit()
 
 def registrar_usuario(username, password, fecha=None):
+    conn = sqlite3.connect('BBDD.db')
+    cursor = conn.cursor()
     # Si no se proporciona una fecha, se utiliza la fecha y hora actual
     if fecha is None:
         fecha = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -36,6 +38,8 @@ def registrar_usuario(username, password, fecha=None):
         print("El nombre de usuario ya está en uso.")
 
 def iniciar_sesion(username, password):
+    conn = sqlite3.connect('BBDD.db')
+    cursor = conn.cursor()
     # Verificar credenciales
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
     cursor.execute('''
@@ -50,6 +54,8 @@ def iniciar_sesion(username, password):
         return False
 
 def contar_sesiones_por_dia(username, fecha):
+    conn = sqlite3.connect('BBDD.db')
+    cursor = conn.cursor()
     cursor.execute('''
         SELECT COUNT(*) FROM usuarioslogin WHERE username=? AND strftime('%Y-%m-%d', fecha)=?
     ''', (username, fecha))
