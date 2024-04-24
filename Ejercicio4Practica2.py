@@ -5,6 +5,7 @@ import numpy as np
 import sqlite3
 import hashlib
 
+import requests
 
 conn = sqlite3.connect('BBDD.db')
 cursor = conn.cursor()
@@ -53,13 +54,14 @@ def iniciar_sesion(username, password):
         print("Credenciales incorrectas.")
         return False
 
-def contar_sesiones_por_dia(username, fecha):
-    conn = sqlite3.connect('BBDD.db')
-    cursor = conn.cursor()
-    cursor.execute('''
-        SELECT COUNT(*) FROM usuarioslogin WHERE username=? AND strftime('%Y-%m-%d', fecha)=?
-    ''', (username, fecha))
-    sesiones = cursor.fetchone()[0]
-    print(f"El usuario {username} ha iniciado sesión {sesiones} veces el {fecha}.")
-
-
+def obtener_tacticas_ataque():
+    url = "https://www.virustotal.com/api/v3/attack_tactics/TA0033/attack_techniques?limit=3"
+    headers = {
+        "accept": "application/json",
+        "x-apikey": "ad7dc29910102f2acc14e84e7ad1939f7ee8e4fab0c04e39cf7571012ad70719"
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return [tactic["attributes"]["name"] for tactic in response.json()["data"]]
+    else:
+        return []

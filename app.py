@@ -1,5 +1,7 @@
 import json
-from flask import Flask, render_template, request, redirect, url_for
+
+import requests
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from datetime import datetime
 import pandas as pd
 import sqlite3
@@ -139,14 +141,19 @@ def login():
         Ejercicio4Practica2.iniciar_sesion(username, password)
         return redirect(url_for('index'))
 
-@app.route('/conexiones')
-def conexiones():
-    query = "SELECT username, fecha FROM usuarioslogin"
-    df = pd.read_sql_query(query, conn)
-    df['fecha'] = pd.to_datetime(df['fecha'])
-    df['dia'] = df['fecha'].dt.date
-    conexiones_por_dia = df.groupby(['dia', 'username']).size().reset_index(name='conexiones')
-    return render_template('conexiones.html', conexiones_por_dia=conexiones_por_dia)
+
+
+
+
+@app.route('/tacticas')
+def mostrar_tacticas():
+    tacticas = Ejercicio4Practica2.obtener_tacticas_ataque()
+    if tacticas:
+        return render_template('lista_tacticas.html', tacticas=tacticas)
+    else:
+        return "Error al obtener las tácticas"
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
