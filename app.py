@@ -138,8 +138,10 @@ def login():
     elif request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        Ejercicio4Practica2.iniciar_sesion(username, password)
-        return redirect(url_for('index'))
+        if Ejercicio4Practica2.iniciar_sesion(username, password):
+            return redirect(url_for('index'))
+        else:
+            return render_template('credenciales_incorrectas.html')
 
 
 
