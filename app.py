@@ -139,12 +139,9 @@ def login():
         username = request.form['login_username']
         password = request.form['login_password']
         if Ejercicio4Practica2.iniciar_sesion(username, password):
-            return redirect(url_for('index'))
+            return render_template('credenciales_correctas.html')
         else:
             return render_template('credenciales_incorrectas.html')
-
-
-
 
 
 @app.route('/tacticas')
