@@ -136,8 +136,8 @@ def login():
     if request.method == 'GET':
         return render_template('formulario_login.html')
     elif request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form['login_username']
+        password = request.form['login_password']
         if Ejercicio4Practica2.iniciar_sesion(username, password):
             return redirect(url_for('index'))
         else:
