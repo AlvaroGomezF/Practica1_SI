@@ -66,27 +66,43 @@ def mostrar_formulario2():
 @app.route('/Ejercicio1P2', methods=['GET'])
 def consultar_usuarios_criticos():
     if request.method == 'GET':
-        num_usuarios_criticos = int(request.args.get('num_usuarios_criticos'))
-        filtro_probabilidad = request.args.get('filtro_probabilidad')
-        resultados = Ejercicio4.obtener_usuarios_criticos(num_usuarios_criticos)
-        if filtro_probabilidad == "mayor_05":
-            resultados = resultados[resultados['probabilidad'] >= 0.5]
-        elif filtro_probabilidad == "menor_05":
-            resultados = resultados[resultados['probabilidad'] < 0.5]
+        num_usuarios_criticos = request.args.get('num_usuarios_criticos')
 
-        return render_template('resultados_usuarios_criticos.html', resultados=resultados)
+        if num_usuarios_criticos is not None and num_usuarios_criticos.isdigit():
+            num_usuarios_criticos = int(num_usuarios_criticos)
+            if 1 <= num_usuarios_criticos <= 30:
+                filtro_probabilidad = request.args.get('filtro_probabilidad')
+                resultados = Ejercicio4.obtener_usuarios_criticos(num_usuarios_criticos)
+                if filtro_probabilidad == "mayor_05":
+                    resultados = resultados[resultados['probabilidad'] >= 0.5]
+                elif filtro_probabilidad == "menor_05":
+                    resultados = resultados[resultados['probabilidad'] < 0.5]
+
+                return render_template('resultados_usuarios_criticos.html', resultados=resultados)
+
+        error_message = "El número de usuarios críticos debe estar entre 1 y 30."
+        return render_template('Ejercicio1P2.html', error_message=error_message)
+
 
 @app.route('/consulta-paginas-desactualizadas', methods=['GET'])
 def mostrar_formulario_paginas_desactualizadas():
     return render_template('formulario_paginas_desactualizadas.html')
 
+
 @app.route('/consultar-paginas-desactualizadas', methods=['GET'])
 def consultar_paginas_desactualizadas():
     if request.method == 'GET':
-        num_paginas_desactualizadas = int(request.args.get('num_paginas_desactualizadas'))
-        paginas_desactualizadas = Ejercicio4.obtener_top_paginas_desactualizadas(num_paginas_desactualizadas)
-        return render_template('resultados_paginas_desactualizadas.html', paginas_desactualizadas=paginas_desactualizadas)
+        num_paginas_desactualizadas = request.args.get('num_paginas_desactualizadas')
 
+        if num_paginas_desactualizadas is not None and num_paginas_desactualizadas.isdigit():
+            num_paginas_desactualizadas = int(num_paginas_desactualizadas)
+            if 1 <= num_paginas_desactualizadas <= 20:
+                paginas_desactualizadas = Ejercicio4.obtener_top_paginas_desactualizadas(num_paginas_desactualizadas)
+                return render_template('resultados_paginas_desactualizadas.html',
+                                       paginas_desactualizadas=paginas_desactualizadas)
+
+        error_message = "El número de páginas desactualizadas debe estar entre 1 y 20."
+        return render_template('formulario_paginas_desactualizadas.html', paginas_desactualizadas=[], error_message=error_message)
 
 @app.route('/Ejercicio3P2')
 def mostrar_vulnerabilidades():

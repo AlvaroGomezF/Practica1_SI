@@ -9,7 +9,7 @@
     <h1>Consulta de Usuarios Críticos</h1>
     <form action="/Ejercicio1P2" method="GET">
         <label for="numUsuarios">Número de Usuarios Críticos a Mostrar:</label>
-        <input type="number" id="numUsuarios" name="num_usuarios_criticos" min="1" required>
+        <input type="number" id="numUsuarios" name="num_usuarios_criticos" placeholder="Introduce un valor [1-30]...">
         <label for="filtroProbabilidad">Filtro por Probabilidad:</label>
         <select id="filtroProbabilidad" name="filtro_probabilidad">
             <option value="todos">Sin Filtro</option>
@@ -18,6 +18,8 @@
         </select>
         <button type="submit">Consultar</button>
     </form>
-
+    {% if error_message %}
+    <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
 </body>
 </html>

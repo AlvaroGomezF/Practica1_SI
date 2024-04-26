@@ -9,8 +9,11 @@
     <h1>Consulta de Páginas Web Desactualizadas</h1>
     <form action="/consultar-paginas-desactualizadas" method="GET">
         <label for="numPaginas">Número de Páginas Web Desactualizadas a Mostrar:</label>
-        <input type="number" id="numPaginas" name="num_paginas_desactualizadas" min="1" required>
+        <input type="number" id="numPaginas" name="num_paginas_desactualizadas" placeholder="Introduce un valor [1-20]...">
         <button type="submit">Consultar</button>
     </form>
+    {% if error_message %}
+    <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
 </body>
 </html>
