@@ -4,6 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Últimas 10 Vulnerabilidades</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        li strong {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
     <h1>Últimas 10 vulnerabilidades en tiempo real</h1>
@@ -11,6 +36,7 @@
         {% for vulnerabilidad in vulnerabilidades %}
         <li>
             <strong>{{ vulnerabilidad.id }}</strong>
+            <span>{{ vulnerabilidad.summary }}</span>
         </li>
         {% endfor %}
     </ul>
