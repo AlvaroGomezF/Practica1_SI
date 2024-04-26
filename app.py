@@ -1,7 +1,11 @@
 import json
-import sqlite3
 
-from flask import Flask, render_template, request, redirect, url_for
+import requests
+from flask import Flask, render_template, request, redirect, url_for, jsonify
+from datetime import datetime
+import pandas as pd
+import sqlite3
+import hashlib
 import Ejercicio2
 import Ejercicio3
 import Ejercicio3Practica2
@@ -9,8 +13,11 @@ import Ejercicio4
 import matplotlib
 
 import Ejercicio5Clasificadores
+import Ejercicio4Practica2
 
 app = Flask(__name__)
+conn = sqlite3.connect('BBDD.db')
+cursor = conn.cursor()
 
 @app.route('/')
 def index():
@@ -60,7 +67,13 @@ def mostrar_formulario2():
 def consultar_usuarios_criticos():
     if request.method == 'GET':
         num_usuarios_criticos = int(request.args.get('num_usuarios_criticos'))
+        filtro_probabilidad = request.args.get('filtro_probabilidad')
         resultados = Ejercicio4.obtener_usuarios_criticos(num_usuarios_criticos)
+        if filtro_probabilidad == "mayor_05":
+            resultados = resultados[resultados['probabilidad'] >= 0.5]
+        elif filtro_probabilidad == "menor_05":
+            resultados = resultados[resultados['probabilidad'] < 0.5]
+
         return render_template('resultados_usuarios_criticos.html', resultados=resultados)
 
 @app.route('/consulta-paginas-desactualizadas', methods=['GET'])
@@ -86,6 +99,11 @@ def mostrar_vulnerabilidades():
 @app.route('/consulta-ejer-5', methods=['GET'])
 def eleccion_modelo():
     return render_template('EleccionE5.html')
+
+
+@app.route('/Ejercicio4P2')
+def ejercicio4_p2():
+    return render_template('Ejercicio4P2.html')
 @app.route('/regresionLineal', methods=['GET'])
 def regresionLinealForm():
     return render_template('formularioRegresionLineal.html')
@@ -149,3 +167,40 @@ def randomForest():
         #print(resultado)
         return render_template('resultados_clasificador.html',nombre=nombre,telefono=telefono,provincia=provincia,permisos=int(permisos),
                                total_enviados=total_enviados,phishing=phishing,clicados=clicados,resultado=resultado[0])
+
+@app.route('/registrar', methods=['GET', 'POST'])
+def registro():
+    if request.method == 'GET':
+        return render_template('formulario_registro.html')
+    elif request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        fecha = request.form.get('fecha')
+        Ejercicio4Practica2.registrar_usuario(username, password, fecha)
+        return redirect(url_for('index'))
+
+@app.route('/iniciar', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('formulario_login.html')
+    elif request.method == 'POST':
+        username = request.form['login_username']
+        password = request.form['login_password']
+        if Ejercicio4Practica2.iniciar_sesion(username, password):
+            return render_template('credenciales_correctas.html')
+        else:
+            return render_template('credenciales_incorrectas.html')
+
+
+@app.route('/tacticas')
+def mostrar_tacticas():
+    tacticas = Ejercicio4Practica2.obtener_tacticas_ataque()
+    if tacticas:
+        return render_template('lista_tacticas.html', tacticas=tacticas)
+    else:
+        return "Error al obtener las tácticas"
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
