@@ -10,7 +10,14 @@
     <form action="/Ejercicio1P2" method="GET">
         <label for="numUsuarios">Número de Usuarios Críticos a Mostrar:</label>
         <input type="number" id="numUsuarios" name="num_usuarios_criticos" min="1" required>
+        <label for="filtroProbabilidad">Filtro por Probabilidad:</label>
+        <select id="filtroProbabilidad" name="filtro_probabilidad">
+            <option value="todos">Sin Filtro</option>
+            <option value="mayor_05">Mayores a 0.5</option>
+            <option value="menor_05">Menores a 0.5</option>
+        </select>
         <button type="submit">Consultar</button>
     </form>
+
 </body>
 </html>

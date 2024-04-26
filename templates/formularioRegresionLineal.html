@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/devolverAnalisisRegresionLineal" method="GET">
+        <label for="nombre">Nombre:</label><br>
+      <input type="text" id="nombre" name="nombre" required><br><br>
+
+      <label for="telefono">Teléfono:</label><br>
+      <input type="tel" id="telefono" name="telefono" required pattern="[0-9]{9}"><br><br>
+
+      <label for="provincia">Provincia:</label><br>
+      <input type="text" id="provincia" name="provincia" required><br><br>
+
+      <label for="permisos">Permisos:</label><br>
+      <select id="permisos" name="permisos">
+        <option value="si">Sí</option>
+        <option value="no">No</option>
+      </select><br><br>
+
+      <label for="total_enviados">Total de emails enviados:</label><br>
+      <input type="number" id="total_enviados" name="total_enviados" required><br><br>
+
+      <label for="phishing">Total de emails con phishing:</label><br>
+      <input type="number" id="phishing" name="phishing" required><br><br>
+
+      <label for="clicados">Total de emails clicados:</label><br>
+      <input type="number" id="clicados" name="clicados" required><br><br>
+        <button type="submit">Consultar</button>
+    </form>
+</body>
+</html>

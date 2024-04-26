@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulario de Información</title>
+</head>
+<body>
+
+<h2>Formulario de Información</h2>
+
+<form id="formulario" action="/usuarioClasificar" method="get">
+  <label for="nombre">Nombre:</label><br>
+  <input type="text" id="nombre" name="nombre" required><br><br>
+
+  <label for="telefono">Teléfono:</label><br>
+  <input type="tel" id="telefono" name="telefono" required pattern="[0-9]{9}"><br><br>
+
+  <label for="provincia">Provincia:</label><br>
+  <input type="text" id="provincia" name="provincia" required><br><br>
+
+  <label for="permisos">Permisos:</label><br>
+  <select id="permisos" name="permisos">
+    <option value="si">Sí</option>
+    <option value="no">No</option>
+  </select><br><br>
+
+  <label for="total_enviados">Total de emails enviados:</label><br>
+  <input type="number" id="total_enviados" name="total_enviados" required><br><br>
+
+  <label for="phishing">Total de emails con phishing:</label><br>
+  <input type="number" id="phishing" name="phishing" required><br><br>
+
+  <label for="clicados">Total de emails clicados:</label><br>
+  <input type="number" id="clicados" name="clicados" required><br><br>
+
+<button type="submit" onclick="seleccionarYEnviar('Regresion Lineal')">Regresion Lineal</button>
+  <button type="submit" onclick="seleccionarYEnviar('Decision Tree')">Decision Tree</button>
+  <button type="submit" onclick="seleccionarYEnviar('Random Forest')">Random Forest</button>
+</form>
+
+<script>
+  function seleccionarYEnviar(cosa) {
+    document.getElementById('boton_seleccionado').value = cosa;
+    document.getElementById('formulario').submit();
+  }
+</script>
+
+</body>
+</html>
