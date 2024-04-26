@@ -27,6 +27,8 @@ def registrar_usuario(username, password, fecha=None):
     # Si no se proporciona una fecha, se utiliza la fecha y hora actual
     if fecha is None:
         fecha = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    username = sqlite3.escape_string(username)
     # Hash de la contraseña
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
     try:
