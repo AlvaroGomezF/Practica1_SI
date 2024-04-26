@@ -67,7 +67,13 @@ def mostrar_formulario2():
 def consultar_usuarios_criticos():
     if request.method == 'GET':
         num_usuarios_criticos = int(request.args.get('num_usuarios_criticos'))
+        filtro_probabilidad = request.args.get('filtro_probabilidad')
         resultados = Ejercicio4.obtener_usuarios_criticos(num_usuarios_criticos)
+        if filtro_probabilidad == "mayor_05":
+            resultados = resultados[resultados['probabilidad'] >= 0.5]
+        elif filtro_probabilidad == "menor_05":
+            resultados = resultados[resultados['probabilidad'] < 0.5]
+
         return render_template('resultados_usuarios_criticos.html', resultados=resultados)
 
 @app.route('/consulta-paginas-desactualizadas', methods=['GET'])

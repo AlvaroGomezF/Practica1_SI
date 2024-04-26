@@ -8,28 +8,18 @@ import base64
 
 def obtener_usuarios_criticos(num_usuarios_criticos):
     conn = sqlite3.connect('BBDD.db')
-    query1 = '''
-    SELECT username, contrasena
-    FROM users
-    '''
-    query2 = '''
-    SELECT username, phishing_emails, cliclados_emails
-    FROM users
-    '''
-    dfUsuarios = pd.read_sql_query(query1, conn)
-    dfCorreos = pd.read_sql_query(query2, conn)
 
-    dfCorreos['probabilidad'] = dfCorreos['cliclados_emails'] / dfCorreos['phishing_emails']
-    hashes_sry = calcular_hashes('SRY.txt')
-    dfUsuarios['robustez'] = compararHashes(dfUsuarios['contrasena'], hashes_sry)
-    usuariosDebiles = dfUsuarios[dfUsuarios['robustez'] == 'Debil']
+    queryUsers = '''
+        SELECT username, phishing_emails, cliclados_emails
+        FROM users
+        '''
+    dfUsuarios = pd.read_sql_query(queryUsers, conn)
 
-    usuariosMasCriticos = usuariosDebiles.merge(dfCorreos, on='username')
-
-    usuarios_criticos = usuariosMasCriticos.nlargest(num_usuarios_criticos, 'probabilidad')
+    dfUsuarios['probabilidad'] = dfUsuarios['cliclados_emails'] / (dfUsuarios['phishing_emails']+ 1e-6)
+    usuariosOrdenados=dfUsuarios.sort_values(by='probabilidad', ascending=False)
+    usuarios_criticos=usuariosOrdenados.head(num_usuarios_criticos)
 
     return usuarios_criticos
-
 
 
 def calcular_hashes(file_name):
@@ -290,6 +280,29 @@ def obtener_top_paginas_desactualizadas(num_paginas):
     top_paginas_desactualizadas = df_sorted.head(num_paginas)
 
     return top_paginas_desactualizadas
+
+
+def obtener_probabilidad_alta():
+    conn = sqlite3.connect('BBDD.db')
+    query_alta = '''
+            SELECT username, phishing_emails, cliclados_emails,
+                   cliclados_emails / phishing_emails AS probabilidad
+            FROM users
+            WHERE (cliclados_emails / phishing_emails) >= 0.5
+            '''
+    resultados = pd.read_sql_query(query_alta, conn)
+    return resultados
+
+def obtener_probabilidad_baja():
+    conn = sqlite3.connect('BBDD.db')
+    query_baja = '''
+            SELECT username, phishing_emails, cliclados_emails,
+                   cliclados_emails / phishing_emails AS probabilidad
+            FROM users
+            WHERE (cliclados_emails / phishing_emails) < 0.5
+            '''
+    resultados = pd.read_sql_query(query_baja, conn)
+    return resultados
 
 top_paginas = obtener_top_paginas_desactualizadas(2)
 print(top_paginas)
