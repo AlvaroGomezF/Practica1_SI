@@ -1,5 +1,6 @@
 import json
 
+import flask
 import requests
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from datetime import datetime
@@ -120,70 +121,81 @@ def eleccion_modelo():
 @app.route('/Ejercicio4P2')
 def ejercicio4_p2():
     return render_template('Ejercicio4P2.html')
+
 @app.route('/regresionLineal', methods=['GET'])
 def regresionLinealForm():
-    return render_template('formularioRegresionLineal.html')
+    return flask.render_template('formularioRegresionLineal.html')
 
 @app.route('/devolverAnalisisRegresionLineal', methods=['GET'])
 def regresionLineal():
-    if request.method=='GET':
-        nombre=(request.args.get('nombre'))
-        telefono=(request.args.get('telefono'))
-        provincia=(request.args.get('provincia'))
-        permisos=(request.args.get('permisos'))
-        total_enviados=(request.args.get('total_enviados'))
-        phishing=(request.args.get('phishing'))
-        clicados=(request.args.get('clicados'))
-        usuario=(nombre,telefono,provincia,permisos,total_enviados,phishing,clicados)
+    if flask.request.method== 'GET':
+        nombre=html.escape(flask.request.args.get('nombre'))
+        telefono=html.escape(flask.request.args.get('telefono'))
+        provincia=html.escape(flask.request.args.get('provincia'))
+        permisos=html.escape(flask.request.args.get('permisos'))
+        total_enviados=html.escape(flask.request.args.get('total_enviados'))
+        phishing=html.escape(flask.request.args.get('phishing'))
+        clicados=html.escape(flask.request.args.get('clicados'))
+        #usuario=(nombre,telefono,provincia,permisos,total_enviados,phishing,clicados)
         #print(usuario)
+
+        #Validamos los datos de entrada
+        if nombre==None or telefono==None or provincia==None or permisos==None or int(permisos)<0 or int(permisos)>1 or total_enviados==None  or not total_enviados.isdigit() or clicados==None or not clicados.isdigit() or phishing==None or not phishing.isdigit() :
+            return flask.render_template('formularioRegresionLineal.html')
         emails=[[int(total_enviados),int(phishing),int(clicados),int(permisos)]]
         resultado=Ejercicio5Clasificadores.regresionLineal(emails)
         #print(resultado)
-        return render_template('resultados_clasificador.html',nombre=nombre,telefono=telefono,provincia=provincia,permisos=permisos,
-                               total_enviados=total_enviados,phishing=phishing,clicados=clicados,resultado=resultado)
+        return flask.render_template('resultados_clasificador.html', nombre=nombre, telefono=telefono, provincia=provincia, permisos=permisos,
+                                     total_enviados=total_enviados, phishing=phishing, clicados=clicados, resultado=resultado)
 
 @app.route('/decisionTree', methods=['GET'])
 def regresionDecisionTreeForm():
-    return render_template('formularioDecisionTree.html')
+    return flask.render_template('formularioDecisionTree.html')
 @app.route('/devolverAnalisisDecisionTree', methods=['GET'])
 def decisionTree():
-    if request.method=='GET':
-        nombre=(request.args.get('nombre'))
-        telefono=(request.args.get('telefono'))
-        provincia=(request.args.get('provincia'))
-        permisos=(request.args.get('permisos'))
-        total_enviados=(request.args.get('total_enviados'))
-        phishing=(request.args.get('phishing'))
-        clicados=(request.args.get('clicados'))
-        usuario=(nombre,telefono,provincia,permisos,total_enviados,phishing,clicados)
-        print(usuario)
+    if flask.request.method== 'GET':
+        nombre = html.escape(flask.request.args.get('nombre'))
+        telefono = html.escape(flask.request.args.get('telefono'))
+        provincia = html.escape(flask.request.args.get('provincia'))
+        permisos = html.escape(flask.request.args.get('permisos'))
+        total_enviados = html.escape(flask.request.args.get('total_enviados'))
+        phishing = html.escape(flask.request.args.get('phishing'))
+        clicados = html.escape(flask.request.args.get('clicados'))
+        # Validamos los datos de entrada
+        if nombre == None or telefono == None or provincia == None or permisos == None or int(permisos) < 0 or int(
+                permisos) > 1 or total_enviados == None or not total_enviados.isdigit() or clicados == None or not clicados.isdigit() or phishing == None or not phishing.isdigit():
+            return flask.render_template('formularioDecisionTree.html')
         emails=[[int(total_enviados),int(phishing),int(clicados),int(permisos)]]
         resultado=Ejercicio5Clasificadores.decision_tree(emails)
         print(resultado)
-        return render_template('resultados_clasificador.html',nombre=nombre,telefono=telefono,provincia=provincia,permisos=int(permisos),
-                               total_enviados=total_enviados,phishing=phishing,clicados=clicados,resultado=resultado[0])
+        return flask.render_template('resultados_clasificador.html', nombre=nombre, telefono=telefono, provincia=provincia, permisos=int(permisos),
+                                     total_enviados=total_enviados, phishing=phishing, clicados=clicados, resultado=resultado[0])
 
 @app.route('/randomForest', methods=['GET'])
 def regresionRandomForestForm():
-    return render_template('formularioRandomForest.html')
+    return flask.render_template('formularioRandomForest.html')
 @app.route('/devolverAnalisisRandomForest', methods=['GET'])
 def randomForest():
-    if request.method=='GET':
-        nombre=(request.args.get('nombre'))
-        telefono=(request.args.get('telefono'))
-        provincia=(request.args.get('provincia'))
-        permisos=(request.args.get('permisos'))
-        total_enviados=(request.args.get('total_enviados'))
-        phishing=(request.args.get('phishing'))
-        clicados=(request.args.get('clicados'))
-        usuario=(nombre,telefono,provincia,permisos,total_enviados,phishing,clicados)
-        #print(usuario)
+    if flask.request.method== 'GET':
+        nombre = html.escape(flask.request.args.get('nombre'))
+        telefono = html.escape(flask.request.args.get('telefono'))
+        provincia = html.escape(flask.request.args.get('provincia'))
+        permisos = html.escape(flask.request.args.get('permisos'))
+        total_enviados = html.escape(flask.request.args.get('total_enviados'))
+        phishing = html.escape(flask.request.args.get('phishing'))
+        clicados = html.escape(flask.request.args.get('clicados'))
+        # usuario=(nombre,telefono,provincia,permisos,total_enviados,phishing,clicados)
+        # print(usuario)
+
+        # Validamos los datos de entrada
+        if nombre == None or telefono == None or provincia == None or permisos == None or int(permisos) < 0 or int(
+                permisos) > 1 or total_enviados == None or not total_enviados.isdigit() or clicados == None or not clicados.isdigit() or phishing == None or not phishing.isdigit():
+            return flask.render_template('formularioRandomForest.html')
         emails=[[int(total_enviados),int(phishing),int(clicados),int(permisos)]]
         resultado=Ejercicio5Clasificadores.random_forest(emails)
         #print(resultado)
-        return render_template('resultados_clasificador.html',nombre=nombre,telefono=telefono,provincia=provincia,permisos=int(permisos),
-                               total_enviados=total_enviados,phishing=phishing,clicados=clicados,resultado=resultado[0])
-
+        return flask.render_template('resultados_clasificador.html', nombre=nombre, telefono=telefono, provincia=provincia, permisos=int(permisos),
+                                     total_enviados=total_enviados, phishing=phishing, clicados=clicados, resultado=resultado[0])
 @app.route('/registrar', methods=['GET', 'POST'])
 def registro():
     if request.method == 'GET':
