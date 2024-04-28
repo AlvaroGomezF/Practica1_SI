@@ -26,11 +26,9 @@ def transformarNuevoDato(nuevoDato):
 def regresionLineal(nuevoDato):
     conn = sqlite3.connect('BBDD.db')
 
-    # Datos de ejemplo (sustituye esto con tus datos reales)
-    # Aquí deberías cargar tus datos desde la base de datos
+    #Cargamos los datos de la base de datos
     query = """SELECT * FROM users_training"""
     df = pd.read_sql_query(query, conn)
-    #print(df.head())
 
     # Extraer características y etiquetas
     caracteristicas = []
@@ -44,8 +42,7 @@ def regresionLineal(nuevoDato):
             proporcion_ciclado_phising = ciclado_emails / phising_emails
         else:
             # Si phising_emails es cero, asignar un valor predeterminado o manejar el caso según sea necesario
-            proporcion_ciclado_phising = 0  # Por ejemplo, podrías asignar 0 o algún otro valor predeterminado
-
+            proporcion_ciclado_phising = 0
         # Agregar la característica y etiqueta correspondiente
         caracteristicas.append([proporcion_ciclado_phising])
         etiquetas.append(row["critico"])
@@ -61,11 +58,11 @@ def regresionLineal(nuevoDato):
     modelo = LinearRegression()
     modelo.fit(X_train, y_train)
     coef=modelo.coef_
+    print("Coeficiente de regresion lineal",coef[0])
     datoTransformado=transformarNuevoDato(nuevoDato)
-    #print("Prediccion: ",modelo.predict(datoTransformado))
 
     y_pred=modelo.predict(X_test)
-    print("Error:" ,mean_squared_error(y_pred,y_pred))
+    print("Error regresion lineal:" ,mean_squared_error(y_pred,y_test))
 
     plt.figure(figsize=(10, 6))
     plt.scatter(X_test, y_test, color='blue', label='Datos de prueba')
@@ -82,8 +79,7 @@ def regresionLineal(nuevoDato):
 def decision_tree(nuevoDato):
     conn = sqlite3.connect('BBDD.db')
 
-    # Datos de ejemplo (sustituye esto con tus datos reales)
-    # Aquí deberías cargar tus datos desde la base de datos
+    #Cargamos los datos de la base de datos
     query = """SELECT * FROM users_training"""
     df = pd.read_sql_query(query, conn)
 
@@ -100,30 +96,22 @@ def decision_tree(nuevoDato):
     y = np.array(etiquetas)
 
     # Dividir datos en conjuntos de entrenamiento y prueba
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=10)
 
     # Instanciar y entrenar el modelo de árbol de decisión
     modelo = DecisionTreeClassifier()
     modelo.fit(X_train, y_train)
 
-    #Saco el umbral
     y_pred=modelo.predict(X_test)
-    #print(y_pred)
     # Evaluar el modelo
-    precision = modelo.score(X_test, y_test)
     precision2=accuracy_score(y_pred,y_test)
-
-    #print("Precisión del modelo con .score:", precision)
-    #print("Precision del modelo con .acurracy",precision2)
-    #print("Prediccion: ",modelo.predict(nuevoDato))
-
+    print("Precision del modelo con .acurracy decision tree",precision2)
 
     # Imprimir el árbol de decisión
     plt.figure(figsize=(20, 10))
     plot_tree(modelo, filled=True, feature_names=["total_emails", "phising_emails", "ciclado_emails","permisos"],
               class_names=["No crítico", "Crítico"])
     plt.show()
-    print(modelo.predict(nuevoDato))
 
     return modelo.predict(nuevoDato)
 
@@ -131,8 +119,7 @@ def decision_tree(nuevoDato):
 def random_forest(nuevoDato):
     conn = sqlite3.connect('BBDD.db')
 
-    # Datos de ejemplo (sustituye esto con tus datos reales)
-    # Aquí deberías cargar tus datos desde la base de datos
+    #Cargamos los datos de la base de datos
     query = """SELECT * FROM users_training"""
     df = pd.read_sql_query(query, conn)
 
@@ -151,7 +138,7 @@ def random_forest(nuevoDato):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=36)
 
     # Instanciar y entrenar el modelo de árbol de decisión
-    modelo = RandomForestClassifier(n_estimators=15)
+    modelo = RandomForestClassifier(n_estimators=15,max_depth=2,random_state=10)
     modelo.fit(X_train, y_train)
 
     '''
@@ -166,23 +153,18 @@ def random_forest(nuevoDato):
     # Evaluar el modelo
     y_pred=modelo.predict(X_test)
     precision=accuracy_score(y_pred,y_test)
-    #print("Precision del modelo : ",precision)
-
-
-    prediccion=modelo.predict(nuevoDato)
-    #print("Prediccion nuevo dato",prediccion)
+    print("Precision del modelo random forest: ",precision)
 
     return modelo.predict(nuevoDato)
 
 
 #decision_tree()
-nuevoDato=[[100,100,90,1]]
+nuevoDato=[[101,22,14,0]]
 decision_tree(nuevoDato)
 
-#regresion lineal
-#nuevoDato=[[100,100,90,1]]
-#regresionLineal(nuevoDato)
+nuevoDato=[[100,100,90,1]]
+regresionLineal(nuevoDato)
 
 #random forest
-#nuevoDato=[[100,20,5,0]]
-#random_forest(nuevoDato)
+nuevoDato=[[100,20,5,0]]
+random_forest(nuevoDato)
